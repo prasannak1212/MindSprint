@@ -1,0 +1,15 @@
+[project]
+name = "mindsprint"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.116.1",
+    "numpy>=2.3.2",
+    "pydantic>=2.11.7",
+    "pymongo>=4.14.1",
+    "requests>=2.32.5",
+    "streamlit>=1.49.1",
+    "uvicorn>=0.35.0",
+]
