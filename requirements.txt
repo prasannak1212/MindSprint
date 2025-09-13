@@ -4,3 +4,7 @@ requests
 streamlit
 pymongo
 uvicorn
+pandas
+matplotlib
+plotly
+passlib[bcrypt]

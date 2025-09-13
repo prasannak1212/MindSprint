@@ -4,15 +4,16 @@ from typing import Optional
 class User(BaseModel):
     username: str
     email: str
+    password: str
 
 class Habit(BaseModel):
     user: str
     habit_name: str
-    decsription: Optional[str] = None
+    description: Optional[str] = None
 
 class Log(BaseModel):
     user: str
     habit_name: str
     date: str
     status: Optional[str] = "done"
-    value: Optional[str] = None
+    # value: Optional[str] = None
