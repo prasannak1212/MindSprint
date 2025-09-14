@@ -65,10 +65,15 @@ def dashboard_page():
     if st.button("📊 View Analytics"):
         st.session_state["page"] = "analytics"
 
+    if st.button("🪟 View Habits"):
+        st.session_state["page"] = 'habits'
+    
+    if st.button("🪵 View logs"):
+        st.session_state["page"] = 'logs'
+
     if st.button("🚪 Logout"):
         st.session_state.clear()
         st.session_state["page"] = "login"
-
 
 def add_habit_page():
     st.title("➕ Add a New Habit")
@@ -83,7 +88,7 @@ def add_habit_page():
         )
         if res.status_code == 200:
             st.success("Habit added successfully!")
-            st.session_state["page"] = "dashboard"
+            st.session_state["page"] = "add_habit"
         else:
             st.error(res.json().get("detail", "Failed to add habit"))
 
@@ -105,13 +110,43 @@ def log_habit_page():
         )
         if res.status_code == 200:
             st.success("Log saved successfully!")
-            st.session_state["page"] = "dashboard"
+            st.session_state["page"] = "log_habit"
         else:
             st.error(res.json().get("detail", "Failed to save log"))
 
     if st.button("⬅️ Back"):
         st.session_state["page"] = "dashboard"
 
+def view_habits_page():
+    st.title("⛷️ Habits List")
+
+    res = requests.get(f"{API_URL}/habits/{str(st.session_state["username"])}").json()
+    if res['status'] == 'success':
+        st.success("Data fetched successfully!")
+        st.table(res['data'])
+        st.session_state["page"] = "habits"
+    else:
+        st.error(res.json().get("detail", "Failed to save log"))
+
+    if st.button("⬅️ Back"):
+        st.session_state["page"] = "dashboard"
+
+def view_logs_page():
+    st.title("✍️ Habit Logs")
+    
+    habit_name = st.text_input("Habit Name")
+
+    if(habit_name):
+        res = requests.get(f"{API_URL}/logs/{st.session_state["username"]}/{habit_name}").json()
+        if res['status'] == 'success':
+            st.success("Data fetched successfully!")
+            st.table(res['data'])
+            st.session_state["page"] = 'logs'
+        else:
+            st.error(res.json().get("detail", "Failed to save log"))
+    
+    if st.button("⬅️ Back"):
+        st.session_state["page"] = 'dashboard'
 
 def analytics_page():
     st.title("📊 Analytics Dashboard")
@@ -121,7 +156,7 @@ def analytics_page():
     if(habit_name):
         res = requests.get(f"{API_URL}/logs/{st.session_state['username']}/{habit_name}")
         if res.status_code == 200:
-            logs = res.json().get("logs", [])
+            logs = res.json().get("data", [])
             if logs:
                 df = pd.DataFrame(logs)
                 df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")
@@ -155,7 +190,10 @@ def main():
         log_habit_page()
     elif st.session_state["page"] == "analytics":
         analytics_page()
-
+    elif st.session_state["page"] == "habits":
+        view_habits_page()
+    elif st.session_state["page"] == 'logs':
+        view_logs_page()
 
 if __name__ == "__main__":
     main()
